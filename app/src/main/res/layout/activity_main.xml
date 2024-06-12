@@ -17,43 +17,7 @@
         android:layout_margin="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <Button
-            android:id="@+id/easyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Easy"
-            android:padding="8dp"/>
-
-        <Button
-            android:id="@+id/mediumButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medium"
-            android:padding="8dp"/>
-
-        <Button
-            android:id="@+id/hardButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hard"
-            android:padding="8dp"/>
-
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/generateButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Generate"
-            android:padding="8dp"/>
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <FrameLayout
         android:id="@+id/gridContainer"
@@ -78,10 +42,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="16dp"
+        android:layout_margin="30dp"
         app:layout_constraintTop_toBottomOf="@id/gridContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.9" />
+        app:layout_constraintWidth_percent="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

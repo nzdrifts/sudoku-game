@@ -15,17 +15,15 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Difficulty difficulty = Difficulty.NONE;
+    public static Difficulty difficulty = Difficulty.NONE;
     private static final int GRID_SIZE = 9;
     private int[][] originalBoard;
     private Button[][] buttons = new Button[GRID_SIZE][GRID_SIZE];
     private Button[] buttons2 = new Button[GRID_SIZE];
-    private Button btnEasy, btnMedium, btnHard, currentSquare, btnGenerateBoard;
+    private Button currentSquare;
     private HashMap<Button, String> btnLockMap = new HashMap<Button, String>();
     private HashMap<Button, Integer> btnCheckMap = new HashMap<Button, Integer>();
     private GridColours gridColours = new GridColours();
-    private int currentValue;
-    private Button prevButton;
 
 
 
@@ -37,43 +35,33 @@ public class MainActivity extends AppCompatActivity {
         // Setup MainActivity view
         firstSetup();
 
-        // Initialize views
-        iniViews();
+        // Setup Board
+        setupBoard();
 
         // Click listeners
         clickListeners();
     }
 
+    private void setupBoard() {
+        int difficultyInt=0;
+        switch (difficulty){
+            case EASY:
+                difficultyInt = 20;
+                break;
+            case MEDIUM:
+                difficultyInt = 35;
+                break;
+            case HARD:
+                difficultyInt = 50;
+                break;
+        }
+        //generate a new board with set difficulty
+        Sudoku sudoku = new Sudoku(difficultyInt);
+        originalBoard = sudoku.OriginalBoard();
+        populateGrid(sudoku.getBoard());
+    }
+
     private void clickListeners(){
-
-        // Difficulty Listeners
-        this.btnEasy.setOnClickListener(v ->{this.difficulty = Difficulty.EASY;});
-        this.btnMedium.setOnClickListener(v ->{this.difficulty = Difficulty.MEDIUM;});
-        this.btnHard.setOnClickListener(v ->{this.difficulty = Difficulty.HARD;});
-
-
-        // Generate the board buttons
-        this.btnGenerateBoard.setOnClickListener(v -> {
-            int difficultyInt = 0;
-            switch (difficulty){
-                case EASY:
-                    difficultyInt = 20;
-                    break;
-                case MEDIUM:
-                    difficultyInt = 35;
-                    break;
-                case HARD:
-                    difficultyInt = 50;
-                    break;
-            }
-            if (difficultyInt != 0) {
-                //generate a new board with set difficulty
-                Sudoku sudoku = new Sudoku(difficultyInt);
-                originalBoard = sudoku.OriginalBoard();
-                populateGrid(sudoku.getBoard());
-                difficulty = Difficulty.NONE;
-            }
-        });
 
         // Listeners for each square
         for (int i = 0; i < 9; i++) {
@@ -247,10 +235,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void iniViews(){
-        this.btnGenerateBoard = findViewById(R.id.generateButton);
-        this.btnEasy = findViewById(R.id.easyButton);
-        this.btnMedium = findViewById(R.id.mediumButton);
-        this.btnHard = findViewById(R.id.hardButton);
-    }
+
 }
