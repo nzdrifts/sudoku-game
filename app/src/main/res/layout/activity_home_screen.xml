@@ -35,7 +35,8 @@
             android:layout_height="wrap_content"
             android:text="Easy"
             android:padding="8dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:background="@color/difficultyButtons" />
 
         <Button
             android:id="@+id/mediumButton"
@@ -43,7 +44,8 @@
             android:layout_height="wrap_content"
             android:text="Medium"
             android:padding="8dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:background="@color/difficultyButtons" />
 
         <Button
             android:id="@+id/hardButton"
@@ -51,7 +53,8 @@
             android:layout_height="wrap_content"
             android:text="Hard"
             android:padding="8dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:background="@color/difficultyButtons" />
 
         <Button
             android:id="@+id/playButton"

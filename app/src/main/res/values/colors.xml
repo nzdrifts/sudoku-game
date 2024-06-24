@@ -5,8 +5,12 @@
 
     <color name="appBackround">#8E8E8D</color>
 
-    <color name="difficultyButtons">#B593B5</color>
+    <color name="difficultyButtons">#93A6B5</color>
+    <color name="SelectedDifficultyButtons">#5A666F</color>
     <color name="playButton">#684D68</color>
+
+    <color name="InputRow">#707B84</color>
+    <color name="InputRowFinished">#3E4448</color>
 
 
     <color name="BoardColour">#ffffff</color>

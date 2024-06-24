@@ -1,13 +1,23 @@
 package com.example.sudokugame;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,48 +30,141 @@ public class MainActivity extends AppCompatActivity {
     private int[][] originalBoard;
     private Button[][] buttons = new Button[GRID_SIZE][GRID_SIZE];
     private Button[] buttons2 = new Button[GRID_SIZE];
-    private Button currentSquare;
+    private Button currentSquare, backBtn, tempBtn;
+    private TextView tvTime;
     private HashMap<Button, String> btnLockMap = new HashMap<Button, String>();
     private HashMap<Button, Integer> btnCheckMap = new HashMap<Button, Integer>();
+    private HashMap<Button, Integer> btnInputLockMap = new HashMap<Button, Integer>(); //<button,no. of places left>
     private GridColours gridColours = new GridColours();
+    private int squaresLeftToComplete;
+    private int time;
+    private Sudoku sudoku;
+
+    // handler for stopwatch
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                String time = (String) msg.obj;
+                tvTime.setText(time);
+            }
+        }
+    };
+    Stopwatch stopwatch = new Stopwatch(handler);
 
 
-
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Setup MainActivity view
+        // setup back button
+        this.backBtn = findViewById(R.id.backBtn);
+        // setup time textView
+        this.tvTime = findViewById(R.id.tvTime);
+        // setup temp
+        this.tempBtn = findViewById(R.id.button);
+
+        // Setup MainActivity view and button arrays
         firstSetup();
 
         // Setup Board
         setupBoard();
 
+        // populate btnInputLockMap
+        generateLockMap();
+
+        // Start stopwatch
+        Thread stopwatchThread = new Thread(stopwatch);
+        stopwatchThread.start();
+
         // Click listeners
         clickListeners();
     }
+    @SuppressLint("MissingInflatedId")
+    private void showPopup() {
+        // Inflate the custom layout/view
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.game_finished_popup, null);
+
+        // Create a new PopupWindow
+        int width = ViewGroup.LayoutParams.MATCH_PARENT;
+        int height = 1600;
+        boolean focusable = false; // Lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // Set the text in the time TextView
+        TextView time = popupView.findViewById(R.id.time);
+        String timeText = stopwatch.getTime();
+        time.setText("Time: " + timeText);
+
+        // Set the text in the avg_time TextView
+        TextView avg_time = popupView.findViewById(R.id.avg_time);
+        String avg_timeText = "who knows";
+        avg_time.setText("Avg. Time: " + avg_timeText);
+
+        // stop stopwatch
+        stopwatch.stop();
+
+        // Set up a dismiss button in the popup layout
+        Button closeButton = popupView.findViewById(R.id.close_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, HomeScreen.class));
+            }
+        });
+
+        // Show the popup window
+        // The view argument should be an anchor view, like the button triggering the popup
+        popupWindow.showAtLocation(tempBtn, Gravity.CENTER, 0, 0);
+    }
+
+    private void generateLockMap() {
+        for (int i = 1; i <= 9; i++) {
+            btnInputLockMap.put(buttons2[i-1],sudoku.getHashMap(i));
+        }
+    }
+
 
     private void setupBoard() {
         int difficultyInt=0;
         switch (difficulty){
             case EASY:
                 difficultyInt = 20;
+                squaresLeftToComplete = 81-20;
                 break;
             case MEDIUM:
                 difficultyInt = 35;
+                squaresLeftToComplete = 81-35;
                 break;
             case HARD:
                 difficultyInt = 50;
+                squaresLeftToComplete = 81-50;
                 break;
         }
         //generate a new board with set difficulty
         Sudoku sudoku = new Sudoku(difficultyInt);
+        this.sudoku = sudoku;
         originalBoard = sudoku.OriginalBoard();
         populateGrid(sudoku.getBoard());
     }
 
     private void clickListeners(){
+
+        // temp
+        tempBtn.setOnClickListener(v -> {
+            showPopup();
+        });
+
+        //back button listener
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, HomeScreen.class));
+            }
+        });
 
         // Listeners for each square
         for (int i = 0; i < 9; i++) {
@@ -100,19 +203,39 @@ public class MainActivity extends AppCompatActivity {
             final int appendVal = i+1;
             this.buttons2[i].setOnClickListener(v -> {
                 Button setButton = (Button) v;
-                if(btnLockMap.get(currentSquare).equals("UnLocked")) {
-                    this.currentSquare.setText(String.valueOf(appendVal));
-                    if(btnCheckMap.get(currentSquare) == Integer.parseInt(currentSquare.getText().toString())){
-                        currentSquare.setTextColor(getResources().getColor(R.color.CorrectNumber));
-                    }else{
-                        currentSquare.setTextColor(getResources().getColor(R.color.IncorrectNumber));
+                if (currentSquare!=null && btnInputLockMap.get(setButton) != 0){
+
+                    // if square is unlocked
+                    if (btnLockMap.get(currentSquare).equals("UnLocked")) {
+                        this.currentSquare.setText(String.valueOf(appendVal));
+                        if (btnCheckMap.get(currentSquare) == Integer.parseInt(currentSquare.getText().toString())) {
+                            currentSquare.setTextColor(getResources().getColor(R.color.CorrectNumber));
+                            btnLockMap.put(currentSquare,"Locked");
+                            squaresLeftToComplete--;
+                            // check to see if button on bottom row needs to be locked/reduce number by 1 otherwise
+                            btnInputLockMap.put(setButton,btnInputLockMap.get(setButton)-1);
+                            if(btnInputLockMap.get(setButton) == 0){
+                                // grey out the number on the row
+                                setButton.setVisibility(View.INVISIBLE);
+                            }
+                            // checks to see if game is complete
+                            if (squaresLeftToComplete == 0){ //game complete
+                                FileHandler.gameCompleted(difficulty);
+                                showPopup();
+                            }
+                        } else {
+                            currentSquare.setTextColor(getResources().getColor(R.color.IncorrectNumber));
+                        }
                     }
                 }
+
             });
         }
 
 
     }
+
+    // calculate new average time
 
 
     // Initialize a new grid and populate it with values
@@ -182,7 +305,15 @@ public class MainActivity extends AppCompatActivity {
                 params.height = 0;
                 params.rowSpec = GridLayout.spec(row, 1f);
                 params.columnSpec = GridLayout.spec(col, 1f);
-                params.setMargins(2, 2, 2, 2);
+                if(row%3==0 && col%3==0){
+                    params.setMargins(8, 8, 2, 2);
+                }else if (col%3==0) {
+                    params.setMargins(8, 2, 2, 2);
+                }else if (row%3==0) {
+                    params.setMargins(2, 9, 2, 2);
+                }else{
+                    params.setMargins(2, 2, 2, 2);
+                }
 
                 button.setLayoutParams(params);
                 button.setPadding(0, 0, 0, 0);

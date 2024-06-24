@@ -2,6 +2,7 @@ package com.example.sudokugame;
 
 import android.widget.Button;
 
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /*
@@ -14,10 +15,17 @@ public class Sudoku {
     int n = 9; //number of rows/columns
     int bw = 3; //width of each box
     int k; //number of squares to remove
+    private HashMap<Integer,Integer> btnRemovedHashMap = new HashMap<Integer,Integer>();//<1-9,0>
 
     Sudoku(int k){
         this.k = k;
         board = new int[n][n];
+
+        // populate HashMap <1-9,0>
+        for (int i = 1; i <= 9; i++) {
+            this.btnRemovedHashMap.put(i,0);
+        }
+
         fillSquares();
     }
 
@@ -152,14 +160,27 @@ public class Sudoku {
             int i = ThreadLocalRandom.current().nextInt(0, n);
             int j = ThreadLocalRandom.current().nextInt(0, n);
             if(board[i][j]!=0){
+                appendHashMap(board[i][j]);
                 board[i][j] = 0;
                 k--;
             }
         }
     }
 
+    private void appendHashMap(int number) {
+        // appends count by 1
+        int oldNum = btnRemovedHashMap.get(number);
+        btnRemovedHashMap.put(number,oldNum+1);
+
+    }
+
+    public int getHashMap(int i){
+        return btnRemovedHashMap.get(i);
+    }
+
 
     public int[][] OriginalBoard() {
         return originalBoard;
     }
+
 }
