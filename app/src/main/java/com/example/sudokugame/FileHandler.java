@@ -4,85 +4,91 @@ import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileHandler  extends AppCompatActivity {
-    String fileContent;
 
-    public FileHandler(){}
+    public static void readFileInBackground(Context context, String fileName, FileReadCallback callback) {
+        new Thread(() -> {
+            List<String> result = readFromFile(context, fileName);
+            callback.onFileRead(result);
+        }).start();
+    }
 
-    // runs when game is completed and appends win to appropriate difficulty
-    public static void gameCompleted(Difficulty difficulty) {
-        switch (difficulty){
-            case EASY:
+    private static List<String> readFromFile(Context context, String fileName) {
+        File path = context.getFilesDir();
+        File readFrom = new File(path, fileName);
+        List<String> lines = new ArrayList<>();
 
-                break;
-            case MEDIUM:
+        if (!readFrom.exists()) {
+            lines.add("File not found: " + fileName);
+            return lines;
+        }
 
-                break;
-            case HARD:
+        BufferedReader reader = null;
 
-                break;
+        try {
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFrom)));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            lines.add(e.toString());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    lines.add("Failed to close the BufferedReader: " + e.toString());
+                }
+            }
+        }
+
+        return lines;
+    }
+
+    public static void writeToFile(Context context, String fileName, List<String> lines) {
+        new Thread(() -> writeToFileInternal(context, fileName, lines)).start();
+    }
+
+    private static void writeToFileInternal(Context context, String fileName, List<String> lines) {
+        File path = context.getFilesDir();
+        File writeTo = new File(path, fileName);
+
+        BufferedWriter writer = null;
+
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeTo, false))); // Overwrite mode
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    public String readFromFile(String fileName){
-            File path = getApplicationContext().getFilesDir();
-            File readFrom = new File(path, fileName);
-            byte[] content = new byte[(int) readFrom.length()];
-
-            try {
-                FileInputStream stream = new FileInputStream(readFrom);
-                stream.read(content); // reads from stream and stores in content array
-                return new String(content);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return e.toString();
-            }
-        }
+    public interface FileReadCallback {
+        void onFileRead(List<String> content);
+    }
 }
-
-/*
-// *** currently testing ***
-        this.btnReset.setOnClickListener(v -> { //(write to)
-                String content = "wrote to file x";
-                File path = getApplicationContext().getFilesDir();
-                try {
-                FileOutputStream writer = new FileOutputStream(new File(path, "stats.txt"));
-                writer.write(content.getBytes());
-                writer.close();
-                } catch (IOException e) {
-                e.printStackTrace();
-                }
-                });
-
-                this.btnReadFrom.setOnClickListener(v -> {
-                // display new stats
-                String stats = null;
-                try {
-                stats = loadStats("stats.txt");
-                } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-                }
-                easy.setText(stats);
-                });
-                }
-
-public String loadStats(String fileName) throws FileNotFoundException {
-        File path = getApplicationContext().getFilesDir();
-        File readFrom = new File(path, fileName);
-        byte[] content = new byte[(int) readFrom.length()];
-
-        try {
-        FileInputStream stream = new FileInputStream(readFrom);
-        stream.read(content); // reads from stream and stores in content array
-        return new String(content);
-        } catch (IOException e) {
-        e.printStackTrace();
-        return e.toString();
-        }
-        }
-        */

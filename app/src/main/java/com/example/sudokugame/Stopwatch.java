@@ -40,7 +40,8 @@ public class Stopwatch implements Runnable{
         return seconds;
     }
 
-    public String getTime(){
+    public String getStringTime(){
         return time;
     }
+    public int getIntSeconds(){return seconds;}
 }

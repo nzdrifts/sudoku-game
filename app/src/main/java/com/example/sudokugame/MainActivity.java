@@ -1,8 +1,12 @@
 package com.example.sudokugame;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,9 +23,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,8 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<Button, Integer> btnInputLockMap = new HashMap<Button, Integer>(); //<button,no. of places left>
     private GridColours gridColours = new GridColours();
     private int squaresLeftToComplete;
-    private int time;
     private Sudoku sudoku;
+    private static int oldAvgTime, oldGamesPlayed;//time stored in seconds
+    private int currentRow, currentCol;
+    SharedPreferences preference;
 
     // handler for stopwatch
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -58,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.preference = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         // setup back button
         this.backBtn = findViewById(R.id.backBtn);
@@ -75,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
         // populate btnInputLockMap
         generateLockMap();
 
+        // remove any used up buttons
+        for (int i = 0; i < buttons2.length; i++) {
+            if(btnInputLockMap.get(buttons2[i])==0){
+                // grey out the number on the row
+                buttons2[i].setVisibility(View.INVISIBLE);
+            }
+        }
+
         // Start stopwatch
         Thread stopwatchThread = new Thread(stopwatch);
         stopwatchThread.start();
@@ -82,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         // Click listeners
         clickListeners();
     }
+
     @SuppressLint("MissingInflatedId")
     private void showPopup() {
         // Inflate the custom layout/view
@@ -91,18 +112,48 @@ public class MainActivity extends AppCompatActivity {
         // Create a new PopupWindow
         int width = ViewGroup.LayoutParams.MATCH_PARENT;
         int height = 1600;
-        boolean focusable = false; // Lets taps outside the popup also dismiss it
+        boolean focusable = false; // Lets taps outside the popup not dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-        // Set the text in the time TextView
+
+        //load data from file into oldAvgTimeStr, oldGamesPlayedStr
+        oldAvgTime = preference.getInt("avgTime", 0);
+        oldGamesPlayed = preference.getInt("gamesPlayed", 0);
+
+        //calculate new avg time
+        int numerator = (oldAvgTime*oldGamesPlayed) + stopwatch.getIntSeconds();
+        int denominator = oldGamesPlayed+1;
+        int newAvgTimeInt = (int) ((double)numerator/(double)denominator);
+
+
+        // write new average to storage and increment games played
+        SharedPreferences.Editor editor = preference.edit();
+
+        // Put data
+        editor.putInt("avgTime", newAvgTimeInt);
+        editor.putInt("gamesPlayed", oldGamesPlayed+1);
+
+        // Commit the changes
+        editor.apply();
+
+
+        int minutes = (newAvgTimeInt % 3600) / 60;
+        int remainingSeconds = newAvgTimeInt % 60;
+        String s = String.format("%02d:%02d%n", minutes, remainingSeconds);
+
+        // Set the text in the timetv
         TextView time = popupView.findViewById(R.id.time);
-        String timeText = stopwatch.getTime();
+        String timeText = stopwatch.getStringTime();
         time.setText("Time: " + timeText);
 
-        // Set the text in the avg_time TextView
+        // Set the text in the avg_timetv
         TextView avg_time = popupView.findViewById(R.id.avg_time);
-        String avg_timeText = "who knows";
-        avg_time.setText("Avg. Time: " + avg_timeText);
+        avg_time.setText("Avg. Time: " + s);
+        if(newAvgTimeInt<oldAvgTime){
+            avg_time.setTextColor(getResources().getColor(R.color.green));
+        } else{
+            avg_time.setTextColor(getResources().getColor(R.color.red));
+        }
 
         // stop stopwatch
         stopwatch.stop();
@@ -117,9 +168,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Show the popup window
-        // The view argument should be an anchor view, like the button triggering the popup
-        popupWindow.showAtLocation(tempBtn, Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(backBtn, Gravity.CENTER, 0, 0);
     }
+
 
     private void generateLockMap() {
         for (int i = 1; i <= 9; i++) {
@@ -132,16 +183,16 @@ public class MainActivity extends AppCompatActivity {
         int difficultyInt=0;
         switch (difficulty){
             case EASY:
-                difficultyInt = 20;
-                squaresLeftToComplete = 81-20;
+                difficultyInt = 1;
+                squaresLeftToComplete = 1;
                 break;
             case MEDIUM:
                 difficultyInt = 35;
-                squaresLeftToComplete = 81-35;
+                squaresLeftToComplete = 35;
                 break;
             case HARD:
-                difficultyInt = 50;
-                squaresLeftToComplete = 81-50;
+                difficultyInt = 42;
+                squaresLeftToComplete = 50;
                 break;
         }
         //generate a new board with set difficulty
@@ -155,7 +206,16 @@ public class MainActivity extends AppCompatActivity {
 
         // temp
         tempBtn.setOnClickListener(v -> {
-            showPopup();
+            // Create a SharedPreferences editor to write data
+            SharedPreferences.Editor editor = preference.edit();
+
+            // Put data
+            editor.putInt("avgTime", 0);
+            editor.putInt("gamesPlayed", 0);
+
+            // Commit the changes
+            editor.apply();
+
         });
 
         //back button listener
@@ -181,18 +241,15 @@ public class MainActivity extends AppCompatActivity {
                         colours = gridColours.selectSquare(row, col);
                         setColours(colours);
 
+
                         // Set current button
                         currentSquare = square;
+                        currentRow = row;
+                        currentCol = col;
 
                         // highlights the selected numbers
                         currentSquare.setBackgroundResource(R.drawable.selected_number_drawable);
-                        for (int a = 0; a < 9; a++) {
-                            for (int b = 0; b < 9; b++) {
-                                if (buttons[a][b].getText().toString().equals(currentSquare.getText().toString()) && buttons[a][b] != currentSquare && !buttons[a][b].getText().toString().equals(" ")) {
-                                    buttons[a][b].setBackgroundResource(R.drawable.other_selected_number_drawable);
-                                }
-                            }
-                        }
+                        highlightSquares(currentSquare);
                     }
                 });
             }
@@ -208,6 +265,14 @@ public class MainActivity extends AppCompatActivity {
                     // if square is unlocked
                     if (btnLockMap.get(currentSquare).equals("UnLocked")) {
                         this.currentSquare.setText(String.valueOf(appendVal));
+                        // reset colour
+                        int[][] colours = gridColours.reset();
+                        setColours(colours);
+                        colours = gridColours.selectSquare(currentRow, currentCol);
+                        setColours(colours);
+
+                        currentSquare.setBackgroundResource(R.drawable.selected_number_drawable);
+                        highlightSquares(currentSquare);
                         if (btnCheckMap.get(currentSquare) == Integer.parseInt(currentSquare.getText().toString())) {
                             currentSquare.setTextColor(getResources().getColor(R.color.CorrectNumber));
                             btnLockMap.put(currentSquare,"Locked");
@@ -220,8 +285,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                             // checks to see if game is complete
                             if (squaresLeftToComplete == 0){ //game complete
-                                FileHandler.gameCompleted(difficulty);
-                                showPopup();
+                                if (difficulty == Difficulty.HARD) {
+                                    showPopup();
+                                }
                             }
                         } else {
                             currentSquare.setTextColor(getResources().getColor(R.color.IncorrectNumber));
@@ -234,6 +300,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    private void highlightSquares(Button currentSquare) {
+        for (int a = 0; a < 9; a++) {
+            for (int b = 0; b < 9; b++) {
+                if (buttons[a][b].getText().toString().equals(currentSquare.getText().toString()) && buttons[a][b] != currentSquare && !buttons[a][b].getText().toString().equals(" ")) {
+                    buttons[a][b].setBackgroundResource(R.drawable.other_selected_number_drawable);
+                }
+            }
+        }
+    }
+
 
     // calculate new average time
 

@@ -19,10 +19,8 @@
     <color name="RowAndColGridColour">#e2e7f0</color>
     <color name="CorrectNumber">#85B573</color>
     <color name="IncorrectNumber">#DE5559</color>
-
-
-
-
+    <color name="green">#61BE5A</color>
+    <color name="red">#DA3124</color>
 
 
 </resources>
