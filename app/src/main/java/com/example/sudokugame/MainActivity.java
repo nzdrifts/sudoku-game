@@ -191,8 +191,8 @@ public class MainActivity extends AppCompatActivity {
                 squaresLeftToComplete = 35;
                 break;
             case HARD:
-                difficultyInt = 42;
-                squaresLeftToComplete = 50;
+                difficultyInt = 1;
+                squaresLeftToComplete = 1;
                 break;
         }
         //generate a new board with set difficulty
