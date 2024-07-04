@@ -23,11 +23,15 @@ This is a simple sudoku game I made in Java through Android Studio
 #### Installation
 
 ## Usage (screenshots and steps)
+<img src="ImagesREADME/MainMenu.png" alt="Main Menu" height="500"/>
+<img src="ImagesREADME/UntouchedBoard.png" alt="UntouchedBoard" height="500"/>
+<img src="ImagesREADME/FilledSquaresUnavaliable.png" alt="Filled Squares Unavaliable" height="500"/>
 
-![Main Menu](ImagesREADME/MainMenu.png)
-![UntouchedBoard](ImagesREADME/UntouchedBoard.png)
-![Filled Squares Unavaliable](ImagesREADME/FilledSquaresUnavaliable.png)
-![Incorrect Answer](ImagesREADME/IncorrectAnswer.png)
-![Game End](ImagesREADME/GameEnd.png)
+<br />
+<img src="ImagesREADME/IncorrectAnswer.png" alt="Incorrect Answer" height="500"/>
+<img src="ImagesREADME/GameEnd.png" alt="Game End" height="500"/>
+
+
+
 ## Contact
 Kirill Toptun - kirilltoptun@gmail.com
