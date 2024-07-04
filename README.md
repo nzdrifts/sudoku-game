@@ -23,9 +23,12 @@ This is a simple sudoku game I made in Java through Android Studio
 #### Installation
 
 ## Usage (screenshots and steps)
-<img src="ImagesREADME/MainMenu.png" alt="Main Menu" height="500"/>
-<img src="ImagesREADME/UntouchedBoard.png" alt="UntouchedBoard" height="500"/>
-<img src="ImagesREADME/FilledSquaresUnavaliable.png" alt="Filled Squares Unavaliable" height="500"/>
+
+
+|Main menu screen|Newely generated board|Finished numbers dissapear|
+|---|---|
+| <img src="ImagesREADME/MainMenu.png" alt="Main Menu" height="500"/> | <img src="ImagesREADME/UntouchedBoard.png" alt="UntouchedBoard" height="500"/> | <img src="ImagesREADME/FilledSquaresUnavaliable.png" alt="Filled Squares Unavaliable" height="500"/> |
+
 
 <br />
 <img src="ImagesREADME/IncorrectAnswer.png" alt="Incorrect Answer" height="500"/>
