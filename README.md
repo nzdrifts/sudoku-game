@@ -24,7 +24,10 @@ This is a simple sudoku game I made in Java through Android Studio
 
 ## Usage (screenshots and steps)
 
-![Screenshot 2024-07-03 at 8.59.00 PM.png](..%2F..%2FDesktop%2FScreenshot%202024-07-03%20at%208.59.00%E2%80%AFPM.png)
-![Screenshot 2024-07-03 at 9.02.20 PM.png](..%2F..%2FDesktop%2FScreenshot%202024-07-03%20at%209.02.20%E2%80%AFPM.png)
+![Main Menu](ImagesREADME/MainMenu.png)
+![UntouchedBoard](ImagesREADME/UntouchedBoard.png)
+![Filled Squares Unavaliable](ImagesREADME/FilledSquaresUnavaliable.png)
+![Incorrect Answer](ImagesREADME/IncorrectAnswer.png)
+![Game End](ImagesREADME/GameEnd.png)
 ## Contact
 Kirill Toptun - kirilltoptun@gmail.com
