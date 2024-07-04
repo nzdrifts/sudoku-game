@@ -14,8 +14,8 @@ This is a simple sudoku game I made in Java through Android Studio
 - Stores count of player wins and avg. time played using built in SharedPreferences class
 - Timer creates a new thread that displays and records time taken to complete a puzzle
 - locks value in place if correct number is placed into a square
-- When a number has been used up the player will no longer be able to place that number down
-- Displays and keeps a locally stored record of the users average time and calculates new average whenever they complete a "hard" puzzle
+- When a number has been used up, the player will no longer be able to place that number down
+- Displays and keeps a localy stored record of the users average time and calculates new average whenever they complete a "hard" puzzle
 
 
 
@@ -25,7 +25,7 @@ This is a simple sudoku game I made in Java through Android Studio
 ## Usage (screenshots and steps)
 
 
-| Main menu screen | Newely generated board | Finished numbers dissapear |
+| Main menu screen | Newely generated board | Finished numbers disappear |
 | --- | --- | --- |
 | <img src="ImagesREADME/MainMenu.png" alt="Main Menu" height="500"/> | <img src="ImagesREADME/UntouchedBoard.png" alt="UntouchedBoard" height="500"/> | <img src="ImagesREADME/FilledSquaresUnavaliable.png" alt="Filled Squares Unavaliable" height="500"/> |
 
