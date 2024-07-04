@@ -25,14 +25,16 @@ This is a simple sudoku game I made in Java through Android Studio
 ## Usage (screenshots and steps)
 
 
-|Main menu screen|Newely generated board|Finished numbers dissapear|
-|---|---|
+| Main menu screen | Newely generated board | Finished numbers dissapear |
+| --- | --- | --- |
 | <img src="ImagesREADME/MainMenu.png" alt="Main Menu" height="500"/> | <img src="ImagesREADME/UntouchedBoard.png" alt="UntouchedBoard" height="500"/> | <img src="ImagesREADME/FilledSquaresUnavaliable.png" alt="Filled Squares Unavaliable" height="500"/> |
 
+| Incorrect Answers Marked Red | Players Avg. Time Recorded |
+|---|---|
+|<img src="ImagesREADME/IncorrectAnswer.png" alt="Incorrect Answer" height="500"/>|<img src="ImagesREADME/GameEnd.png" alt="Game End" height="500"/>|
 
-<br />
-<img src="ImagesREADME/IncorrectAnswer.png" alt="Incorrect Answer" height="500"/>
-<img src="ImagesREADME/GameEnd.png" alt="Game End" height="500"/>
+
+
 
 
 
