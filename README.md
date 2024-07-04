@@ -3,8 +3,7 @@
 (maybe add something about debugging in cv)
 
 # Sudoku Mobile Game
-## Intro
-This is a simple sudoku game I made in Java through Android Studio
+### This is a sudoku puzzle solver game I wrote in Java using Android Studio
 
 ## Built With
 - Android Studio
@@ -15,15 +14,14 @@ This is a simple sudoku game I made in Java through Android Studio
 - Timer creates a new thread that displays and records time taken to complete a puzzle
 - locks value in place if correct number is placed into a square
 - When a number has been used up, the player will no longer be able to place that number down
-- Displays and keeps a localy stored record of the users average time and calculates new average whenever they complete a "hard" puzzle
+- Displays and keeps a locally stored record of the users average time and calculates new average whenever they complete a "hard" puzzle
 
+## Installation
+- Download Android Studio https://developer.android.com/studio
+- Open project in Android Studio
+- Run Application
 
-
-## Getting Started
-#### Installation
-
-## Usage (screenshots and steps)
-
+## Screenshots
 
 | Main menu screen | Newely generated board | Finished numbers disappear |
 | --- | --- | --- |
@@ -32,10 +30,6 @@ This is a simple sudoku game I made in Java through Android Studio
 | Incorrect Answers Marked Red | Players Avg. Time Recorded |
 |---|---|
 |<img src="ImagesREADME/IncorrectAnswer.png" alt="Incorrect Answer" height="500"/>|<img src="ImagesREADME/GameEnd.png" alt="Game End" height="500"/>|
-
-
-
-
 
 
 ## Contact
