@@ -20,6 +20,8 @@
 - Download Android Studio https://developer.android.com/studio
 - Open project in Android Studio
 - Run Application
+### Or
+- Load provided .apk (Sudoku.apk) onto an android phone and run (supports android 9+)
 
 ## Screenshots
 

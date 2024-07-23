@@ -191,8 +191,8 @@ public class MainActivity extends AppCompatActivity {
                 squaresLeftToComplete = 35;
                 break;
             case HARD:
-                difficultyInt = 1;
-                squaresLeftToComplete = 1;
+                difficultyInt = 45;
+                squaresLeftToComplete = 45;
                 break;
         }
         //generate a new board with set difficulty
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickListeners(){
 
-        // temp
+        // reset data button!!!!!!
         tempBtn.setOnClickListener(v -> {
             // Create a SharedPreferences editor to write data
             SharedPreferences.Editor editor = preference.edit();
