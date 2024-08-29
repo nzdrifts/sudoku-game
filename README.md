@@ -1,7 +1,3 @@
-# todo
-
-(maybe add something about debugging in cv)
-
 # Sudoku Mobile Game
 ### This is a sudoku puzzle solver game I wrote in Java using Android Studio
 
